@@ -16,7 +16,7 @@ We do not write "throwaway" or placeholder code. Every line of code written by a
 2. **Defensive Programming**: Write code that anticipates failure. Handle edge cases, nullability, network timeouts, and incorrect user inputs proactively.
 3. **Self-Documenting Code**: Prefer clean, readable code and descriptive names over complex tricks. When writing non-obvious logic, write clear docstrings (`///`) and comments explaining the *why*, not just the *what*.
 4. **KISS (Keep It Simple, Stupid)**: Do not over-engineer. Avoid adding speculative features, complex design patterns, or unnecessary levels of abstraction before they are actually needed (YAGNI). Write straightforward, readable code that is easy for human developers to reason about and debug.
-5. **DRY (Don't Repeat Yourself)**: Avoid duplicating logic. When similar code blocks appear in multiple places, extract them into reusable functions, utilities, helper classes, or extensions (e.g. within `lib/core/extensions/`). However, maintain semantic separation—do not force coupling between unrelated modules just to share superficially similar code.
+5. **DRY (Don't Repeat Yourself)**: Avoid duplicating logic. When similar code blocks appear in multiple places, extract them into reusable extension methods (e.g. within `lib/core/extensions/`), domain services, or static utility classes (`abstract final class`). Never create loose top-level functions. Maintain semantic separation—do not force coupling between unrelated modules just to share superficially similar code.
 
 ---
 
@@ -38,6 +38,18 @@ Non-class top-level definitions do **not** require individual dedicated files pe
 - **Grouped Enum Files**: Multiple `enum` declarations belonging to the same domain may be combined into a domain enum file (e.g., `user_enums.dart`, `order_enums.dart`, or `enums.dart` inside a feature directory).
 - **Grouped Typedef Files**: Function signature aliases and type definitions belonging to the same domain may be combined into a domain typedef file (e.g., `user_typedefs.dart` or `typedefs.dart`).
 - **Grouped Extension Files**: Related extension methods belonging to the same domain or type may be combined into a domain extension file (e.g., `string_extensions.dart`, `datetime_extensions.dart`, or `extensions.dart`).
+
+### Rule 2.3: No Top-Level / Hanging Functions
+Free-floating top-level ("hanging") functions declared outside of any class or extension scope are strictly **forbidden**.
+- **Encapsulation Standards**: All helper, transformation, and utility logic must be properly encapsulated:
+  - **Type-Specific Utilities**: Prefer `extension` or `extension type` methods operating directly on the receiver type (e.g., `extension DateTimeFormatX on DateTime` placed in `lib/core/extensions/` or grouped extension files).
+  - **Stateless / General Utilities**: Encapsulate static helper methods inside an uninstantiable utility class using modern Dart class modifiers (`abstract final class DateUtils { DateUtils._(); static DateTime parse(...) { ... } }`).
+  - **Domain / Business Operations**: Encapsulate inside domain services, repositories, or use case classes following Rule 2.1.
+- **Allowed Exceptions**:
+  - **Entrypoints**: `void main()` in application flavor entry points (`main_development.dart`, `main_staging.dart`, `main_production.dart`) and test files (`*_test.dart`).
+  - **Extensions & Extension Types**: Methods declared inside `extension` or `extension type` definitions.
+  - **Enums & Typedefs**: Member methods inside `enum` definitions and `typedef` function signatures.
+  - **Riverpod Generators**: Top-level `@riverpod` annotated provider declarations generated via `riverpod_generator` (e.g., `@riverpod String userName(Ref ref) => ...`).
 
 ---
 
@@ -62,6 +74,7 @@ When working on this codebase, all AI agents **must** enforce the following rule
 - **Result Type Wrapper**: All business logic and repository functions must return the Result wrapper type. Never bubble raw infrastructure exceptions to the presentation layer.
 - **Reactive Streams**: When using reactive streams (e.g., database streams, real-time sync), return `Stream<Result<T>>` instead of `Stream<T>` to ensure that stream errors are treated as explicit data and handled safely downstream.
 - **Failure Mapping**: Convert network, database, or device exceptions into structured subclasses of Failure (e.g., `ServerFailure`) at the Data layer boundaries.
+- **Structured Error Logging**: Always record caught exceptions and unrecoverable failures using `AppLog.error()` or `AppLog.fatal()` with full `error` and `stackTrace` parameters and scoped tags. Never use `print()` or `debugPrint()`.
 
 ### Rule 3.4: Code Readability & Style
 - **Line Length**: Adhere to the strict 100-character line limit. Ensure the automatic formatter is run before completing a task.

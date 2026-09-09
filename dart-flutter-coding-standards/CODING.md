@@ -48,6 +48,7 @@ To ensure consistency and safety, we follow these non-negotiable syntax rules:
    - **Metadata**: Use separate helper methods or extension methods in the relevant layer to map enums to metadata (e.g., mapping a `Status` enum to a `Color` in the UI layer).
 9. **Extensions**: Encouraged for adding utility methods to standard Dart or external types. Keep global extensions in `lib/core/extensions/`.
 10. **Late Variables**: Use `late` with extreme caution. Only use it when initialization is strictly guaranteed before access (e.g., inside `initState`). Otherwise, prefer nullable types.
+11. **No Hanging / Top-Level Functions**: Never declare loose, top-level functions. Encapsulate operations within `extension` blocks, domain classes, or static utility classes (`abstract final class AppUtils { AppUtils._(); static ... }`). Top-level functions are only permitted for `main()` entrypoints, `@riverpod` provider declarations, and methods inside `extension`/`enum` definitions.
 
 ---
 
@@ -90,6 +91,109 @@ sealed class Result<T> {
   });
 }
 ```
+
+## 3.1 Error Logging
+
+All logging across all layers must use the centralized `AppLog` utility (`lib/core/utils/app_log.dart`). Direct calls to `print()` or `debugPrint()` are strictly **forbidden**.
+
+### Structured Logger Implementation
+
+```dart
+import 'dart:developer' as dev;
+
+/// Centralized, structured logging utility wrapping [dev.log].
+///
+/// Ensures zero third-party dependencies while providing consistent log levels,
+/// tags, error capture, and stack traces visible in Dart DevTools.
+abstract final class AppLog {
+  AppLog._();
+
+  /// Log general debug/diagnostic details during development (level: 500).
+  static void debug(
+    String message, {
+    String tag = 'DEBUG',
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    dev.log(
+      message,
+      name: tag,
+      level: 500,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
+
+  /// Log informational messages about normal application flow (level: 800).
+  static void info(
+    String message, {
+    String tag = 'INFO',
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    dev.log(
+      message,
+      name: tag,
+      level: 800,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
+
+  /// Log non-fatal anomalies or warnings (level: 900).
+  static void warning(
+    String message, {
+    String tag = 'WARNING',
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    dev.log(
+      message,
+      name: tag,
+      level: 900,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
+
+  /// Log recoverable errors or caught exceptions with stack traces (level: 1000).
+  static void error(
+    String message, {
+    String tag = 'ERROR',
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    dev.log(
+      message,
+      name: tag,
+      level: 1000,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
+
+  /// Log critical, unrecoverable system failures (level: 1200).
+  static void fatal(
+    String message, {
+    String tag = 'FATAL',
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    dev.log(
+      message,
+      name: tag,
+      level: 1200,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
+}
+```
+
+### Logging Rules
+1. **Always Pass StackTrace**: When catching an error or exception, always pass the caught `error` and `stackTrace` to `AppLog.error()` or `AppLog.fatal()`.
+2. **Descriptive Tags**: Use meaningful, scoped tags matching the feature or layer (e.g., `tag: 'AuthRepository'`, `tag: 'DioClient'`).
+3. **No Sensitive Data**: Never log passwords, tokens, API keys, or personally identifiable information (PII).
 
 ---
 

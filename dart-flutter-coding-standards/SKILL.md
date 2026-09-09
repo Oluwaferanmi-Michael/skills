@@ -17,11 +17,12 @@ This skill governs the architecture, code organization, state management, and qu
    - **Shared Atomic UI (`lib/ui/shared/`)**: Strictly pure presentation widgets accepting primitive values or tokens via constructor and reporting actions via callbacks.
    - **Feature UI (`lib/features/...`)**: May watch granular Riverpod providers (Smart Widgets) for rebuild isolation and performance.
    - **Local Ephemeral State**: Use Flutter Hooks (`useState`, `useTextEditingController`, `useAnimationController`) inside `HookWidget` / `HookConsumerWidget`.
-4. **Explicit Error Handling**: All business logic and repository functions must return a `Result<T>` wrapper. Never bubble unhandled exceptions to UI.
+4. **Explicit Error Handling & Logging**: All business logic and repository functions must return a `Result<T>` wrapper. Never bubble unhandled exceptions to UI. Use structured logging via `AppLog` with full `StackTrace`; raw `print` or `debugPrint` is strictly forbidden.
 5. **Code Safety & Quality**:
    - Line length capped at 100 characters.
    - No force unwrapping with `!`. Use null-aware operators or pattern matching.
    - Riverpod code generation (`@riverpod`) is mandatory for providers.
+6. **No Hanging / Top-Level Functions**: Free-floating top-level functions are banned. Encapsulate operations in `extension` methods, domain classes, or `abstract final class` static utility namespaces. Allowed exceptions: `main()` entrypoints, `@riverpod` providers, `extension`/`enum` methods, and `typedef`s.
 
 ---
 
@@ -36,6 +37,7 @@ Inspect the target directory structure and determine the architecture pattern:
 When creating or refactoring code:
 - Ensure **every class** (entities, models, repositories, widgets, providers) gets its own dedicated file.
 - Group domain enums, typedefs, and extensions in dedicated grouped files (`enums.dart`, `typedefs.dart`, `extensions.dart`).
+- Never introduce loose top-level functions—use extension files or static utility classes (`abstract final class`).
 
 ### Step 3: Implementation & State Wiring
 - Use `@riverpod` annotations for provider generation.
