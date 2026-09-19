@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BrandKnowledgePackManifest",
+  "description": "Schema definition for a Brand Knowledge Pack manifest (brand.json)",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "description",
+    "social",
+    "assets"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique alphanumeric brand identifier, e.g. 'sttf'",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Full formal name of the organization or brand"
+    },
+    "short_name": {
+      "type": "string",
+      "description": "Abbreviated brand or acronym, e.g. 'STTF'"
+    },
+    "description": {
+      "type": "string",
+      "description": "High-level summary of the brand's mission and purpose"
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "city": { "type": "string" },
+        "region": { "type": "string" },
+        "country": { "type": "string" },
+        "coverage": { "type": "string" }
+      }
+    },
+    "social": {
+      "type": "object",
+      "required": ["sign_off", "primary_hashtags"],
+      "properties": {
+        "sign_off": {
+          "type": "string",
+          "description": "Standard caption sign-off line, e.g. 'Standing tall together, always. 🤍'"
+        },
+        "primary_hashtags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Mandatory hashtag set for all social media posts"
+        },
+        "secondary_hashtags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "required": ["logos"],
+      "properties": {
+        "logos": {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": {
+              "type": "string",
+              "description": "Relative path to light/white vector logo for dark backgrounds"
+            },
+            "dark": {
+              "type": "string",
+              "description": "Relative path to dark vector logo for light backgrounds"
+            },
+            "horizontal": {
+              "type": "string",
+              "description": "Relative path to horizontal logo lockup with text"
+            }
+          }
+        }
+      }
+    },
+    "programs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "tagline": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

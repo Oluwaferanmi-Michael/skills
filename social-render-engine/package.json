@@ -1,0 +1,29 @@
+{
+  "name": "social-render-engine",
+  "version": "1.0.0",
+  "description": "Brand-agnostic headless Puppeteer and Handlebars social media graphic rendering engine",
+  "main": "render.js",
+  "bin": {
+    "social-render": "./render.js"
+  },
+  "scripts": {
+    "start": "node render.js",
+    "render": "node render.js",
+    "list-templates": "node render.js --list-templates"
+  },
+  "keywords": [
+    "social-media",
+    "rendering-engine",
+    "puppeteer",
+    "handlebars",
+    "headless",
+    "automation",
+    "graphic-generator"
+  ],
+  "author": "Standing Tall Together Foundation & Open Community",
+  "license": "MIT",
+  "dependencies": {
+    "handlebars": "^4.7.8",
+    "puppeteer": "^24.4.0"
+  }
+}

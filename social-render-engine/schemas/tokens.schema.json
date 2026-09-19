@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BrandThemeTokens",
+  "description": "Schema definition for Brand Theme Tokens (tokens.json) dynamically injected as CSS variables",
+  "type": "object",
+  "required": ["theme"],
+  "properties": {
+    "theme": {
+      "type": "object",
+      "required": [
+        "colorPrimary",
+        "colorBgPaper",
+        "colorBgDark",
+        "colorTextDark",
+        "colorTextLight",
+        "fontHeading",
+        "fontBody"
+      ],
+      "properties": {
+        "colorPrimary": {
+          "type": "string",
+          "description": "Primary brand accent color (e.g. hex #FFAA00)"
+        },
+        "colorPrimaryLight": {
+          "type": "string",
+          "description": "Secondary lighter accent for highlights or hotlines"
+        },
+        "colorBgPaper": {
+          "type": "string",
+          "description": "Light background color (e.g. cream #FFF9EE)"
+        },
+        "colorBgDark": {
+          "type": "string",
+          "description": "Dark background color (e.g. charcoal #242424)"
+        },
+        "colorBgDarkAlt": {
+          "type": "string",
+          "description": "Secondary dark container color (e.g. #313131)"
+        },
+        "colorTextDark": {
+          "type": "string",
+          "description": "Text color for light backgrounds"
+        },
+        "colorTextLight": {
+          "type": "string",
+          "description": "Text color for dark backgrounds and photo overlays"
+        },
+        "colorWhite": {
+          "type": "string",
+          "default": "#FFFFFF"
+        },
+        "fontHeading": {
+          "type": "string",
+          "description": "CSS font-family string for editorial headlines (e.g. \"'Lora', serif\")"
+        },
+        "fontHeadingWeight": {
+          "type": "string",
+          "default": "700"
+        },
+        "fontBody": {
+          "type": "string",
+          "description": "CSS font-family string for body copy and modern statements"
+        },
+        "fontBodyWeights": {
+          "type": "object",
+          "properties": {
+            "regular": { "type": "string", "default": "400" },
+            "medium": { "type": "string", "default": "500" },
+            "bold": { "type": "string", "default": "700" },
+            "black": { "type": "string", "default": "900" }
+          }
+        },
+        "googleFonts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Google Fonts API family query strings to dynamically load"
+        }
+      }
+    }
+  }
+}

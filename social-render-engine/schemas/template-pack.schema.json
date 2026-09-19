@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TemplatePackManifest",
+  "description": "Schema definition for a pluggable Template Pack manifest (template-pack.json)",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "version",
+    "templates"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique alphanumeric identifier for the template pack, e.g. 'universal'",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the template pack"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic versioning string, e.g. '1.0.0'",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the visual style and purpose of this template pack"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author, agency, or foundation that created this pack"
+    },
+    "templates": {
+      "type": "array",
+      "description": "List of templates provided by this pack",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "family",
+          "intents",
+          "file",
+          "slots"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this template within the pack, e.g. 'photo-announcement-qr'",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable display name, e.g. 'Announcement / QR Code'"
+          },
+          "family": {
+            "type": "string",
+            "enum": ["carousel", "minimal", "photo", "custom"],
+            "description": "Template family or layout category"
+          },
+          "intents": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of post intents or brief topics this template is optimized for, e.g. ['announcement', 'qr_code']"
+          },
+          "file": {
+            "type": "string",
+            "description": "Path to the Handlebars HTML template file relative to the pack root, e.g. 'templates/photo/photo-template-1.html'"
+          },
+          "aspect_ratio": {
+            "type": "string",
+            "default": "4:5",
+            "description": "Target aspect ratio, typically '4:5' (1080x1440)"
+          },
+          "dimensions": {
+            "type": "object",
+            "properties": {
+              "width": { "type": "integer", "default": 1080 },
+              "height": { "type": "integer", "default": 1440 }
+            }
+          },
+          "slots": {
+            "type": "object",
+            "description": "Semantic data slots supported by this template",
+            "properties": {
+              "required": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "optional": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "bounds": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "max_words": { "type": "integer" },
+                    "max_chars": { "type": "integer" },
+                    "description": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
